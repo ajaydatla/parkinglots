@@ -1,38 +1,34 @@
 package com.parkinglot.entity;
 
+import com.parkinglot.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
-@Table(name = "parking_lots")
+@Table(name = "users")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ParkingLot {
+@Builder
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true, nullable = false)
+    private String username;
+
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String name;
-
-    @Column(nullable = false)
-    private String location;
-
-    @Column(name = "total_floors", nullable = false)
-    private Integer totalFloors;
-
-    @OneToMany(mappedBy = "parkingLot", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<ParkingSlot> slots;
+    private UserRole role = UserRole.USER;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    private Boolean active = true;
 }

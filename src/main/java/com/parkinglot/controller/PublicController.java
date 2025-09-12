@@ -7,15 +7,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/public")
 @Slf4j
 public class PublicController {
-
-
 
     @GetMapping("/health")
     public ResponseEntity<ApiResponse<Map<String, String>>> healthCheck() {
@@ -26,12 +23,6 @@ public class PublicController {
         );
         return ResponseEntity.ok(ApiResponse.success("Service is healthy", status));
     }
-
-//    @GetMapping("/getAllParkingSlots")
-//    public ResponseEntity<ApiResponse<List<ParkingSlot>>> getAllParkingSlots() {
-//        System.out.println(parkingService.findAllParkingSlot());
-//        return ResponseEntity.ok(ApiResponse.success("Service is healthy", parkingService.findAllParkingSlot()));
-//    }
 
     @GetMapping("/info")
     public ResponseEntity<ApiResponse<Map<String, Object>>> getInfo() {
