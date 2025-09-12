@@ -2,18 +2,13 @@ package com.parkinglot.controller;
 
 import com.parkinglot.dto.ApiResponse;
 import com.parkinglot.entity.ParkingLot;
+import com.parkinglot.entity.ParkingSlot;
 import com.parkinglot.service.ParkingService;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/parking")
@@ -24,10 +19,22 @@ public class ParkingController {
     @Autowired
     private ParkingService parkingService;
 
-    @GetMapping("/getAllParkingSlots")
-    public ResponseEntity<ApiResponse<List<ParkingLot>>> healthCheck() {
+    @GetMapping("/getAllParkinglots")
+    public ResponseEntity<ApiResponse<List<ParkingLot>>> getAllParkinglots() {
 
-        return ResponseEntity.ok(ApiResponse.success("Service is healthy", parkingService.findAl()));
+        return ResponseEntity.ok(ApiResponse.success("Service is healthy", parkingService.findAllParkingLot()));
+    }
+
+    @GetMapping("/getAllParkingSlots")
+    public ResponseEntity<ApiResponse<List<ParkingSlot>>> getAllParkingSlots() {
+
+        return ResponseEntity.ok(ApiResponse.success("Service is healthy", parkingService.findAllParkingSlot()));
+    }
+
+    @GetMapping("/getAllParkingSlotsBySlotNumber")
+    public ResponseEntity<ApiResponse<ParkingSlot>> getAllParkingSlotsBySlotNumber() {
+
+        return ResponseEntity.ok(ApiResponse.success("Service is healthy", parkingService.findBySlotNumber("TRUCK0")));
     }
 
 //    private final ParkingService parkingService;

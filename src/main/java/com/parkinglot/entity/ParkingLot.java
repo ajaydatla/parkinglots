@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -17,9 +18,6 @@ public class ParkingLot {
 
     @Column(nullable = false)
     private String name;
-
-//    @OneToMany(mappedBy = "parkingLot", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    private List<ParkingSlot> slots;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
