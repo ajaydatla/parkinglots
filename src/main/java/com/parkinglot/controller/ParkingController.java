@@ -24,7 +24,7 @@ public class ParkingController {
     @Autowired
     private ParkingService parkingService;
 
-    @GetMapping("/getAllParkingLOTS")
+    @GetMapping("/getAllParkingSlots")
     public ResponseEntity<ApiResponse<List<ParkingLot>>> healthCheck() {
 
         return ResponseEntity.ok(ApiResponse.success("Service is healthy", parkingService.findAl()));
