@@ -30,6 +30,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/public/**").permitAll()
                         .requestMatchers("/api/parking/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/api/admin/**").hasAnyRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults());
