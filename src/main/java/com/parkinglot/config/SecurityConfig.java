@@ -1,61 +1,99 @@
 package com.parkinglot.config;
 
+import com.parkinglot.entity.User;
+import com.parkinglot.enums.UserRole;
+import com.parkinglot.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Bean
-    public static PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+    @Autowired
+    private UserRepository userRepository;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/public/**").permitAll()
-                        .requestMatchers("/api/parking/**").hasAnyRole("USER", "ADMIN")
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/", "/css/**", "/js/**").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/user/**", "/api/parking/**").hasRole("USER")
                         .anyRequest().authenticated()
                 )
-                .httpBasic(Customizer.withDefaults());
+                .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/oauth2/authorization/google")
+                        .defaultSuccessUrl("/home", true)
+                )
+                .csrf(AbstractHttpConfigurer::disable)
+                .logout(logout -> logout
+                        .logoutSuccessUrl("/")
+                        .permitAll()
+                );
+
         return http.build();
     }
 
+    // Role mapper: assign USER by default, ADMIN manually
     @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails user = User.builder()
-                .username("user")
-                .password(passwordEncoder().encode("password"))
-                .roles("USER")
-                .build();
+    public OAuth2UserService<OidcUserRequest, OidcUser> oidcUserService() {
+        final OidcUserService delegate = new OidcUserService();
 
-        UserDetails admin = User.builder()
-                .username("admin")
-                .password(passwordEncoder().encode("admin"))
-                .roles("USER", "ADMIN")
-                .build();
+        return (userRequest) -> {
+            OidcUser oidcUser = delegate.loadUser(userRequest);
 
-        UserDetails parkingUser = User.builder()
-                .username("parking")
-                .password(passwordEncoder().encode("parking123"))
-                .roles("USER")
-                .build();
+            String googleId = oidcUser.getSubject();
+            String email = oidcUser.getEmail();
+            String name = oidcUser.getFullName();
 
-        return new InMemoryUserDetailsManager(user, admin, parkingUser);
+            // Save or update in DB
+            User user = userRepository.findByGoogleId(googleId)
+                    .orElseGet(User::new);
+            user.setGoogleId(googleId);
+            user.setUsername(email);
+            user.setName(name);
+
+            // Assign role (default USER)
+            if (user.getRole() == null) {
+                user.setRole(UserRole.USER);
+            }
+
+
+
+            Set<GrantedAuthority> mappedAuthorities = new HashSet<>();
+            // Default role: ROLE_USER
+            mappedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+
+            // Example: if email is admin → ROLE_ADMIN
+            if (email != null && email.equals("ajaydatlalbn06@gmail.com")) {
+                mappedAuthorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+                user.setRole(UserRole.ADMIN);
+            }
+            userRepository.save(user);
+
+            return new DefaultOidcUser(mappedAuthorities, oidcUser.getIdToken(), oidcUser.getUserInfo());
+        };
     }
 }

@@ -1,4 +1,4 @@
-package com.parkinglot.repo;
+package com.parkinglot.repository;
 
 import com.parkinglot.entity.ParkingLot;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,4 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface ParkingLotRepository extends JpaRepository<ParkingLot, Long> {
+    List<ParkingLot> findByActiveTrue();
+    Optional<ParkingLot> findByIdAndActiveTrue(Long id);
 }

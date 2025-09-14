@@ -1,14 +1,14 @@
 package com.parkinglot.service;
 
-import com.parkinglot.entity.ParkingLot;
-import com.parkinglot.entity.ParkingSlot;
+import com.parkinglot.dto.*;
+import com.parkinglot.entity.User;
 
-import java.util.List;
+import java.util.Optional;
 
 public interface ParkingService {
-
-    List<ParkingLot> findAllParkingLot();
-    List<ParkingSlot> findAllParkingSlot();
-    ParkingSlot findBySlotNumber(String slotNumber);
-
+    VehicleEntryResponse parkVehicle(VehicleEntryRequest request, User user);
+    VehicleExitResponse calculateExitFee(VehicleExitRequest request, User user);
+    PaymentResponse processPayment(PaymentRequest request, User user);
+    ParkingStatusResponse getParkingStatus(Long parkingLotId);
+    Optional<User> findByUsername(String username);
 }

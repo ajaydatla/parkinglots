@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Tickets</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #fafafa;
+        }
+        h2 {
+            text-align: center;
+            margin: 20px 0;
+            color: #2c3e50;
+        }
+        table {
+            border-collapse: collapse;
+            margin: 20px auto;
+            width: 80%;
+            background: white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px 14px;
+            text-align: center;
+        }
+        th {
+            background-color: #f4f6f8;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+<h2>Parking Tickets</h2>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Ticket Number</th>
+        <th>Plate Number</th>
+        <th>Slot Number</th>
+        <th>Entry Time</th>
+        <th>Exit Time</th>
+        <th>Status</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="ticket : ${tickets}">
+        <td th:text="${ticket.id}"></td>
+        <td th:text="${ticket.ticketNumber}"></td>
+        <td th:text="${ticket.plateNumber}"></td>
+        <td th:text="${ticket.slotNumber}"></td>
+        <td th:text="${#temporals.format(ticket.entryTime, 'yyyy-MM-dd HH:mm')}"></td>
+        <td th:text="${ticket.exitTime != null ? #temporals.format(ticket.exitTime, 'yyyy-MM-dd HH:mm') : 'N/A'}"></td>
+        <td th:text="${ticket.status}"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

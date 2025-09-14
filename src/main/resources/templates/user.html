@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>User Dashboard</title></head>
+<body>
+<h2>User Dashboard</h2>
+<p>You can park and retrieve vehicles here.</p>
+<form action="/api/parking/entry" method="post">
+    <input name="plateNumber" placeholder="Plate number">
+    <select name="vehicleType" id="vehicleType">
+        <option value="CAR">CAR</option>
+        <option value="BIKE">BIKE</option>
+        <option value="TRUCK">TRUCK</option>
+    </select>
+    <input type="submit" value="Submit">
+</form>
+</body>
+</html>
