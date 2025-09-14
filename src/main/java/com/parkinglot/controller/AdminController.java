@@ -3,8 +3,11 @@ package com.parkinglot.controller;
 import com.parkinglot.dto.ApiResponse;
 import com.parkinglot.dto.ParkingSlotRequest;
 import com.parkinglot.dto.PricingRuleRequest;
+import com.parkinglot.dto.TicketDTO;
 import com.parkinglot.entity.ParkingSlot;
 import com.parkinglot.entity.PricingRule;
+import com.parkinglot.entity.Ticket;
+import com.parkinglot.entity.User;
 import com.parkinglot.service.AdminService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +29,11 @@ import java.util.List;
 public class AdminController {
 
     private final AdminService adminService;
+
+    @GetMapping("/dashboard")
+    public String getAdminHome(){
+        return "admin";
+    }
 
     // Parking Slot Management
     @PostMapping("/slots")
@@ -53,6 +61,35 @@ public class AdminController {
         List<ParkingSlot> slots = adminService.getAllSlots(parkingLotId);
         model.addAttribute("slots", slots);
         return "slots";
+    }
+
+//    @GetMapping("/tickets")
+//    @ResponseBody
+//    public ResponseEntity<ApiResponse<List<TicketDTO>>> getAllTickets(Model model) {
+//
+//        log.info("Fetching all tickets for parking lot");
+//        List<TicketDTO> tickets = adminService.getAllTickets();
+//        model.addAttribute("ticket", tickets);
+//        return ResponseEntity.status(HttpStatus.CREATED)
+//                .body(ApiResponse.success("Pricing rule created successfully", tickets));
+//    }
+
+    @GetMapping("/tickets")
+    public String getAllTickets(Model model) {
+
+        log.info("Fetching all tickets for parking lot");
+        List<TicketDTO> tickets = adminService.getAllTickets();
+        model.addAttribute("tickets", tickets);
+        return "tickets";
+    }
+
+    @GetMapping("/users")
+    public String getAllUsers(Model model) {
+
+        log.info("Fetching all users for parking lot");
+        List<User> users = adminService.getAllUsers();
+        model.addAttribute("users", users);
+        return "users";
     }
 
     // Pricing Rule Management

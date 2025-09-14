@@ -9,14 +9,17 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.Banner;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+@Controller
 @RequestMapping("/api/parking")
 @RequiredArgsConstructor
 @Slf4j
@@ -26,16 +29,17 @@ public class ParkingController {
     private ParkingService parkingService;
 
     @PostMapping("/entry")
-    public ResponseEntity<ApiResponse<VehicleEntryResponse>> parkVehicle(
+    public String parkVehicle(
             @Valid @ModelAttribute VehicleEntryRequest request,
-            @AuthenticationPrincipal OidcUser oidcUser) {
+            @AuthenticationPrincipal OidcUser oidcUser, Model model) {
 
         log.info("vehile {} getting parked",request.getPlateNumber());
         User user = getCurrentUser(oidcUser);
         log.info("Vehicle entry request from user: {}", user.getUsername());
 
         VehicleEntryResponse response = parkingService.parkVehicle(request, user);
-        return ResponseEntity.ok(ApiResponse.success("Vehicle parked successfully", response));
+        model.addAttribute("ticket", response);
+        return "ticket";
     }
 
     @PostMapping("/exitcalculate")

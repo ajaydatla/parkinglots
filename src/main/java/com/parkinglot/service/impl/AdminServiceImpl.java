@@ -2,14 +2,11 @@ package com.parkinglot.service.impl;
 
 import com.parkinglot.dto.ParkingSlotRequest;
 import com.parkinglot.dto.PricingRuleRequest;
-import com.parkinglot.entity.ParkingLot;
-import com.parkinglot.entity.ParkingSlot;
-import com.parkinglot.entity.PricingRule;
+import com.parkinglot.dto.TicketDTO;
+import com.parkinglot.entity.*;
 import com.parkinglot.enums.SlotStatus;
 import com.parkinglot.exception.ParkingException;
-import com.parkinglot.repository.ParkingLotRepository;
-import com.parkinglot.repository.ParkingSlotRepository;
-import com.parkinglot.repository.PricingRuleRepository;
+import com.parkinglot.repository.*;
 import com.parkinglot.service.AdminService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +23,8 @@ public class AdminServiceImpl implements AdminService {
     private final ParkingSlotRepository parkingSlotRepository;
     private final PricingRuleRepository pricingRuleRepository;
     private final ParkingLotRepository parkingLotRepository;
+    private final TicketRepository ticketRepository;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional
@@ -163,5 +162,25 @@ public class AdminServiceImpl implements AdminService {
                 .orElseThrow(() -> new ParkingException("Parking lot not found: " + parkingLotId));
 
         return pricingRuleRepository.findByParkingLotIdAndActiveTrue(parkingLotId);
+    }
+
+    @Override
+    public List<TicketDTO>  getAllTickets() {
+        return ticketRepository.findAll().stream()
+                .map(t -> new TicketDTO(
+                        t.getId(),
+                        t.getTicketNumber(),
+                        t.getVehicle() != null ? t.getVehicle().getPlateNumber() : null,
+                        t.getSlot() != null ? t.getSlot().getSlotNumber() : null,
+                        t.getEntryTime(),
+                        t.getExitTime(),
+                        t.getStatus()
+                ))
+                .toList();
+    }
+
+    @Override
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 }
