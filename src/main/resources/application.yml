@@ -1,3 +1,66 @@
+server:
+  port: 8080
+
 spring:
   application:
-    name: parking-lot
+    name: parking-lot-system
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  datasource:
+    url: jdbc:h2:mem:parkinglot
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID:971488701765-jtrj2kv633d03vio9qj08fu7oobu5ja1.apps.googleusercontent.com}
+            client-secret: ${GOOGLE_CLIENT_SECRET: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}
+            scope: openid,profile,email
+            redirect-uri: "{baseUrl}/login/oauth2/code/google"
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+            jwk-set-uri: https://www.googleapis.com/oauth2/v3/certs
+
+logging:
+  level:
+    com.parkinglot: DEBUG
+    org.springframework.security: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+
+app:
+  parking:
+    pricing:
+      bike:
+        first-hours-free: 2
+        hourly-rate: 10.0
+      car:
+        first-hours-free: 2
+        hourly-rate: 20.0
+      truck:
+        first-hours-free: 1
+        hourly-rate: 50.0

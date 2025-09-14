@@ -11,7 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,10 +27,11 @@ public class ParkingController {
 
     @PostMapping("/entry")
     public ResponseEntity<ApiResponse<VehicleEntryResponse>> parkVehicle(
-            @Valid @RequestBody VehicleEntryRequest request,
-            Authentication authentication) {
+            @Valid @ModelAttribute VehicleEntryRequest request,
+            @AuthenticationPrincipal OidcUser oidcUser) {
 
-        User user = getCurrentUser(authentication);
+        log.info("vehile {} getting parked",request.getPlateNumber());
+        User user = getCurrentUser(oidcUser);
         log.info("Vehicle entry request from user: {}", user.getUsername());
 
         VehicleEntryResponse response = parkingService.parkVehicle(request, user);
@@ -38,9 +41,9 @@ public class ParkingController {
     @PostMapping("/exitcalculate")
     public ResponseEntity<ApiResponse<VehicleExitResponse>> calculateExitFee(
             @Valid @RequestBody VehicleExitRequest request,
-            Authentication authentication) {
+            @AuthenticationPrincipal OidcUser oidcUser) {
 
-        User user = getCurrentUser(authentication);
+        User user = getCurrentUser(oidcUser);
         log.info("Exit fee calculation request from user: {}", user.getUsername());
 
         VehicleExitResponse response = parkingService.calculateExitFee(request, user);
@@ -50,9 +53,9 @@ public class ParkingController {
     @PostMapping("/payment")
     public ResponseEntity<ApiResponse<PaymentResponse>> processPayment(
             @Valid @RequestBody PaymentRequest request,
-            Authentication authentication) {
+            @AuthenticationPrincipal OidcUser oidcUser) {
 
-        User user = getCurrentUser(authentication);
+        User user = getCurrentUser(oidcUser);
         log.info("Payment request from user: {}", user.getUsername());
 
         PaymentResponse response = parkingService.processPayment(request, user);
@@ -69,17 +72,7 @@ public class ParkingController {
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
-    private User getCurrentUser(Authentication authentication) {
-        // Get the principal object from the authentication
-        Object principal = authentication.getPrincipal();
-
-        // Check if the principal is an instance of UserDetails
-        if (principal instanceof UserDetails userDetails) {
-            // Cast and return the UserDetails object
-            return parkingService.findByUsername(userDetails.getUsername()).orElse(null);
-        }
-
-        // Throw an exception if the principal is of an unexpected type
-        throw new IllegalArgumentException("Authentication principal is not a UserDetails object.");
+    private User getCurrentUser(OidcUser authentication) {
+            return parkingService.findByUsername(authentication.getEmail()).orElse(null);
     }
 }
