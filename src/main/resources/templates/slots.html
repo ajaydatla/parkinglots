@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Available Parking Slots</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 90%;
+            margin: 20px auto;
+        }
+        th, td {
+            border: 1px solid #aaa;
+            padding: 8px 12px;
+            text-align: center;
+        }
+        th {
+            background: #f0f0f0;
+        }
+        tr:nth-child(even) {
+            background: #fafafa;
+        }
+        h2 {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<h2>Available Parking Slots</h2>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Slot Number</th>
+        <th>Floor</th>
+        <th>Vehicle Type</th>
+        <th>Status</th>
+        <th>Created At</th>
+        <th>Updated At</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="slot : ${slots}">
+        <td th:text="${slot.id}"></td>
+        <td th:text="${slot.slotNumber}"></td>
+        <td th:text="${slot.floorNumber}"></td>
+        <td th:text="${slot.vehicleType}"></td>
+        <td th:text="${slot.status}"></td>
+        <td th:text="${#temporals.format(slot.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+        <td th:text="${#temporals.format(slot.updatedAt, 'yyyy-MM-dd HH:mm')}"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

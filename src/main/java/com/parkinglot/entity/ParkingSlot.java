@@ -1,5 +1,6 @@
 package com.parkinglot.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.parkinglot.enums.SlotStatus;
 import com.parkinglot.enums.VehicleType;
 import jakarta.persistence.*;
@@ -39,6 +40,7 @@ public class ParkingSlot {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parking_lot_id", nullable = false)
+    @JsonBackReference
     private ParkingLot parkingLot;
 
     @Version

@@ -3,17 +3,46 @@ package com.parkinglot.controller;
 import com.parkinglot.dto.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
-@RestController
-@RequestMapping("/api/public")
+@Controller
+@RequestMapping("/")
 @Slf4j
 public class PublicController {
 
+    @GetMapping("")
+    public String getHome(@AuthenticationPrincipal OidcUser oidcUser){
+        if (oidcUser != null) {
+            // already logged in → go to home
+            return "redirect:/home";
+        }
+        log.info("getting home without user");
+        return "index";
+    }
+
+    @GetMapping("/home")
+    public String home(Model model, @AuthenticationPrincipal OidcUser oidcUser) {
+        log.info("oidc user {} authenticated",oidcUser.getFullName());
+        model.addAttribute("name", oidcUser.getFullName());
+        model.addAttribute("email", oidcUser.getEmail());
+        return "home";
+    }
+
+    @GetMapping("/user/dashboard")
+    public String userDashboard() {
+        return "user";
+    }
+
+    @ResponseBody
     @GetMapping("/health")
     public ResponseEntity<ApiResponse<Map<String, String>>> healthCheck() {
         Map<String, String> status = Map.of(
@@ -24,6 +53,7 @@ public class PublicController {
         return ResponseEntity.ok(ApiResponse.success("Service is healthy", status));
     }
 
+    @ResponseBody
     @GetMapping("/info")
     public ResponseEntity<ApiResponse<Map<String, Object>>> getInfo() {
         Map<String, Object> info = Map.of(

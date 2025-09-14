@@ -12,11 +12,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('ADMIN')")
@@ -44,12 +46,13 @@ public class AdminController {
     }
 
     @GetMapping("/slots")
-    public ResponseEntity<ApiResponse<List<ParkingSlot>>> getAllSlots(
-            @RequestParam(defaultValue = "1") Long parkingLotId) {
+    public String getAllSlots(
+            @RequestParam(defaultValue = "1") Long parkingLotId, Model model) {
 
         log.info("Fetching all slots for parking lot: {}", parkingLotId);
         List<ParkingSlot> slots = adminService.getAllSlots(parkingLotId);
-        return ResponseEntity.ok(ApiResponse.success(slots));
+        model.addAttribute("slots", slots);
+        return "slots";
     }
 
     // Pricing Rule Management
