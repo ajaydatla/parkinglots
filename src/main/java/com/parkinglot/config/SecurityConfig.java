@@ -1,5 +1,9 @@
 package com.parkinglot.config;
 
+import com.parkinglot.entity.User;
+import com.parkinglot.enums.UserRole;
+import com.parkinglot.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -7,7 +11,6 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.Customizer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -27,6 +30,9 @@ import java.util.Set;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -58,15 +64,34 @@ public class SecurityConfig {
         return (userRequest) -> {
             OidcUser oidcUser = delegate.loadUser(userRequest);
 
+            String googleId = oidcUser.getSubject();
+            String email = oidcUser.getEmail();
+            String name = oidcUser.getFullName();
+
+            // Save or update in DB
+            User user = userRepository.findByGoogleId(googleId)
+                    .orElseGet(User::new);
+            user.setGoogleId(googleId);
+            user.setUsername(email);
+            user.setName(name);
+
+            // Assign role (default USER)
+            if (user.getRole() == null) {
+                user.setRole(UserRole.USER);
+            }
+
+
+
             Set<GrantedAuthority> mappedAuthorities = new HashSet<>();
             // Default role: ROLE_USER
             mappedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
 
             // Example: if email is admin → ROLE_ADMIN
-            String email = oidcUser.getEmail();
-            if (email != null && email.endsWith("@mycompany.com")) {
+            if (email != null && email.equals("ajaydatlalbn06@gmail.com")) {
                 mappedAuthorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+                user.setRole(UserRole.ADMIN);
             }
+            userRepository.save(user);
 
             return new DefaultOidcUser(mappedAuthorities, oidcUser.getIdToken(), oidcUser.getUserInfo());
         };

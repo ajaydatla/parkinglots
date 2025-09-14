@@ -20,7 +20,11 @@ import java.util.Map;
 public class PublicController {
 
     @GetMapping("")
-    public String getHome(){
+    public String getHome(@AuthenticationPrincipal OidcUser oidcUser){
+        if (oidcUser != null) {
+            // already logged in → go to home
+            return "redirect:/home";
+        }
         log.info("getting home without user");
         return "index";
     }
