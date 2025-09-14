@@ -83,7 +83,6 @@ public class SecurityConfig {
 
 
             Set<GrantedAuthority> mappedAuthorities = new HashSet<>();
-            // Default role: ROLE_USER
             mappedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
 
             // Example: if email is admin → ROLE_ADMIN
