@@ -11,5 +11,6 @@ public record TicketDTO(
     String slotNumber,
     LocalDateTime entryTime,
     LocalDateTime exitTime,
-    TicketStatus status
+    TicketStatus status,
+    String user
 ) {}

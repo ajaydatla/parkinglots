@@ -174,7 +174,8 @@ public class AdminServiceImpl implements AdminService {
                         t.getSlot() != null ? t.getSlot().getSlotNumber() : null,
                         t.getEntryTime(),
                         t.getExitTime(),
-                        t.getStatus()
+                        t.getStatus(),
+                        t.getUser().getUsername()
                 ))
                 .toList();
     }

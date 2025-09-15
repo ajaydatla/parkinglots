@@ -1,5 +1,6 @@
 package com.parkinglot.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.parkinglot.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -27,6 +29,10 @@ public class User {
     private String googleId;
 
     private String name;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<Ticket> tickets;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

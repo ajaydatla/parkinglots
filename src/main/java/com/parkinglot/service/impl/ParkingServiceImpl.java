@@ -86,7 +86,7 @@ public class ParkingServiceImpl implements ParkingService {
         parkingSlotRepository.save(allocatedSlot);
 
         // Generate ticket
-        Ticket ticket = createTicket(vehicle, allocatedSlot);
+        Ticket ticket = createTicket(vehicle, allocatedSlot, user);
         ticket = ticketRepository.save(ticket);
 
         log.info("Vehicle parked successfully. Ticket: {}", ticket.getTicketNumber());
@@ -241,6 +241,22 @@ public class ParkingServiceImpl implements ParkingService {
         return userRepository.findByUsername(username);
     }
 
+    @Override
+    public List<TicketDTO> findByUser(User user) {
+        return ticketRepository.findByUser(user).stream()
+                .map(t -> new TicketDTO(
+                        t.getId(),
+                        t.getTicketNumber(),
+                        t.getVehicle() != null ? t.getVehicle().getPlateNumber() : null,
+                        t.getSlot() != null ? t.getSlot().getSlotNumber() : null,
+                        t.getEntryTime(),
+                        t.getExitTime(),
+                        t.getStatus(),
+                        t.getUser().getUsername()
+                ))
+                .toList();
+    }
+
     private Vehicle getOrCreateVehicle(VehicleEntryRequest request, User user) {
         return vehicleRepository.findByPlateNumber(request.getPlateNumber())
                 .orElseGet(() -> {
@@ -252,13 +268,14 @@ public class ParkingServiceImpl implements ParkingService {
                 });
     }
 
-    private Ticket createTicket(Vehicle vehicle, ParkingSlot slot) {
+    private Ticket createTicket(Vehicle vehicle, ParkingSlot slot, User user) {
         Ticket ticket = new Ticket();
         ticket.setTicketNumber(TicketNumberGenerator.generate());
         ticket.setVehicle(vehicle);
         ticket.setSlot(slot);
         ticket.setEntryTime(LocalDateTime.now());
         ticket.setStatus(TicketStatus.ACTIVE);
+        ticket.setUser(user);
         return ticket;
     }
 

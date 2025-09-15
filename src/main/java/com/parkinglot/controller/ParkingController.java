@@ -21,6 +21,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/api/parking")
 @RequiredArgsConstructor
@@ -45,7 +47,9 @@ public class ParkingController {
     }
 
     @GetMapping("/viewticket")
-    public String viewticket() {
+    public String viewticket(Model model, @AuthenticationPrincipal OidcUser oidcUser) {
+        List<TicketDTO> tickets = parkingService.findByUser(getCurrentUser(oidcUser));
+        model.addAttribute("tickets", tickets);
         return "viewticket";
     }
 
@@ -100,6 +104,7 @@ public class ParkingController {
     }
 
     private User getCurrentUser(OidcUser authentication) {
-            return parkingService.findByUsername(authentication.getEmail()).orElse(null);
+        log.info("getting authentication user with email {}",authentication.getEmail());
+        return parkingService.findByUsername(authentication.getEmail()).orElse(null);
     }
 }
