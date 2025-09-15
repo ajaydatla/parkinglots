@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>User Dashboard</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f4f6f9;
+        }
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        input, button {
+            padding: 10px;
+            font-size: 15px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background: #e74c3c;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+        }
+        button:hover {
+            background: #c0392b;
+        }
+        .response-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: #ecf0f1;
+            border-radius: 8px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>User Dashboard</h2>
+    <p>Exit your vehicle and calculate parking fee:</p>
+
+    <!-- Exit Vehicle Form -->
+    <div class="form-group">
+        <input type="text" id="ticketNumber" placeholder="Enter Ticket Number" required>
+    </div>
+    <button onclick="exitVehicle()">Exit Vehicle</button>
+
+    <!-- Response Display -->
+    <div id="responseBox" class="response-box"></div>
+</div>
+
+<script>
+    async function exitVehicle() {
+        const ticketNumber = document.getElementById("ticketNumber").value;
+
+        if (!ticketNumber) {
+            alert("Please enter a Ticket Number!");
+            return;
+        }
+
+        const requestBody = {
+            ticketNumber: ticketNumber
+        };
+
+        try {
+            const response = await fetch("/exitcalculate", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(requestBody)
+            });
+
+            const result = await response.json();
+            const responseBox = document.getElementById("responseBox");
+            responseBox.style.display = "block";
+
+            if (result.success) {
+                responseBox.innerHTML = `
+                    ✅ <b>${result.message}</b><br>
+                    Ticket: ${result.data.ticketNumber}<br>
+                    Plate: ${result.data.plateNumber}<br>
+                    Slot: ${result.data.slotNumber}<br>
+                    Fee: ₹${result.data.fee}<br>
+                    Exit Time: ${result.data.exitTime}
+                `;
+            } else {
+                responseBox.innerHTML = `❌ Error: ${result.message}`;
+            }
+        } catch (error) {
+            alert("Something went wrong while calling exit API!");
+            console.error(error);
+        }
+    }
+</script>
+</body>
+</html>

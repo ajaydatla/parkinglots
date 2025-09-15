@@ -243,6 +243,7 @@ public class ParkingServiceImpl implements ParkingService {
 
     @Override
     public List<TicketDTO> findByUser(User user) {
+
         return ticketRepository.findByUser(user).stream()
                 .map(t -> new TicketDTO(
                         t.getId(),
@@ -252,7 +253,10 @@ public class ParkingServiceImpl implements ParkingService {
                         t.getEntryTime(),
                         t.getExitTime(),
                         t.getStatus(),
-                        t.getUser().getUsername()
+                        t.getUser().getUsername(),
+                        paymentRepository.findByTicketId(t.getId())
+                                .map(Payment::getAmount)
+                                .orElse(BigDecimal.ZERO)
                 ))
                 .toList();
     }
