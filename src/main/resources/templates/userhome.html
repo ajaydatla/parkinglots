@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Parking Lot - Home</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background: #2c3e50;
+            color: #fff;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .navbar h1 {
+            margin: 0;
+            font-size: 20px;
+        }
+        .navbar a {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: 500;
+        }
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #555;
+            margin: 6px 0 20px 0;
+        }
+        .actions {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .card {
+            flex: 1;
+            padding: 20px;
+            background: #f9fafc;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.2s ease;
+        }
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        }
+        .card a {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 15px;
+            background: #3498db;
+            color: #fff;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .card a:hover {
+            background: #2980b9;
+        }
+        .logout {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .logout a {
+            color: #e74c3c;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        .logout a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div class="navbar">
+    <h1>Parking Lot System</h1>
+    <div>
+        <a href="/logout">Logout</a>
+    </div>
+</div>
+
+<div class="container">
+    <h2>Welcome, <span th:text="${name}"></span> 👋</h2>
+    <p>Email: <span th:text="${email}"></span></p>
+
+    <div class="actions">
+        <div class="card">
+            <h3>User Dashboard</h3>
+            <p>Access your parking tickets and manage your vehicles.</p>
+            <a href="/api/parking/createticket">Create ticket</a>
+        </div>
+        <div class="card">
+            <h3>Parking Info</h3>
+            <p>Check slot availability and parking history.</p>
+            <a href="/api/parking/viewticket">View</a>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

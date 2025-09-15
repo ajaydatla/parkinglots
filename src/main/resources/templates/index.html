@@ -2,10 +2,64 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Parking Lot Login</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #74ebd5 0%, #ACB6E5 100%);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+            justify-content: center;
+            align-items: center;
+        }
+        .login-box {
+            background: #fff;
+            padding: 40px 50px;
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+            text-align: center;
+            width: 350px;
+        }
+        h2 {
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            transition: background 0.3s ease;
+        }
+        .btn-user {
+            background: #3498db;
+            color: #fff;
+        }
+        .btn-user:hover {
+            background: #2980b9;
+        }
+        .btn-admin {
+            background: #27ae60;
+            color: #fff;
+        }
+        .btn-admin:hover {
+            background: #1e8449;
+        }
+    </style>
 </head>
 <body>
-<h2>Welcome to Parking Lot System</h2>
-<a href="/oauth2/authorization/google-user">Login as User</a><br><br>
-<a href="/oauth2/authorization/google-admin">Login as Admin</a>
+<div class="login-box">
+    <h2>Welcome to Parking Lot System</h2>
+    <a class="btn btn-user" href="/oauth2/authorization/google-user">Login as User</a>
+    <a class="btn btn-admin" href="/oauth2/authorization/google-admin">Login as Admin</a>
+</div>
 </body>
 </html>

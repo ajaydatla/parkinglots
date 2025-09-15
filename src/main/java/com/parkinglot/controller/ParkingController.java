@@ -11,7 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
@@ -22,11 +24,32 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequestMapping("/api/parking")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('USER')")
 @Slf4j
 public class ParkingController {
 
     @Autowired
     private ParkingService parkingService;
+
+    @GetMapping("/home")
+    public String home(Model model, @AuthenticationPrincipal OidcUser oidcUser) {
+        log.info("oidc user {} authenticated",oidcUser.getFullName());
+        model.addAttribute("name", oidcUser.getFullName());
+        model.addAttribute("email", oidcUser.getEmail());
+        return "userhome";
+    }
+
+    @GetMapping("/createticket")
+    public String createTicket() {
+        return "createticket";
+    }
+
+    @GetMapping("/viewticket")
+    public String viewticket() {
+        return "viewticket";
+    }
+
+
 
     @PostMapping("/entry")
     public String parkVehicle(

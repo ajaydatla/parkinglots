@@ -3,6 +3,7 @@ package com.parkinglot.controller;
 import com.parkinglot.dto.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
@@ -32,14 +33,21 @@ public class PublicController {
     @GetMapping("/home")
     public String home(Model model, @AuthenticationPrincipal OidcUser oidcUser) {
         log.info("oidc user {} authenticated",oidcUser.getFullName());
+        String redirectUrl = "home";
+        for (GrantedAuthority authority : oidcUser.getAuthorities()) {
+            String role = authority.getAuthority();
+
+            if (role.equals("ROLE_ADMIN")) {
+                redirectUrl = "redirect:/api/admin/home";
+                break;
+            } else if (role.equals("ROLE_USER")) {
+                redirectUrl = "redirect:/api/parking/home";
+                break;
+            }
+        }
         model.addAttribute("name", oidcUser.getFullName());
         model.addAttribute("email", oidcUser.getEmail());
-        return "home";
-    }
-
-    @GetMapping("/user/dashboard")
-    public String userDashboard() {
-        return "user";
+        return redirectUrl;
     }
 
     @ResponseBody

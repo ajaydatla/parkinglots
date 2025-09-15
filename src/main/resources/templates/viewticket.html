@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Parking Ticket</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #fafafa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .ticket-card {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            width: 400px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        table {
+            width: 100%;
+        }
+        td {
+            padding: 8px;
+        }
+        td:first-child {
+            font-weight: bold;
+            color: #555;
+            width: 40%;
+        }
+        td:last-child {
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+<div class="ticket-card">
+    <h2>Parking Ticket</h2>
+    <table>
+        <tr>
+            <td>Ticket Number</td>
+            <td th:text="${ticket.ticketNumber}"></td>
+        </tr>
+        <tr>
+            <td>Plate Number</td>
+            <td th:text="${ticket.plateNumber}"></td>
+        </tr>
+        <tr>
+            <td>Vehicle Type</td>
+            <td th:text="${ticket.vehicleType}"></td>
+        </tr>
+        <tr>
+            <td>Slot Number</td>
+            <td th:text="${ticket.slotNumber}"></td>
+        </tr>
+        <tr>
+            <td>Floor</td>
+            <td th:text="${ticket.floorNumber}"></td>
+        </tr>
+        <tr>
+            <td>Entry Time</td>
+            <td th:text="${#temporals.format(ticket.entryTime, 'yyyy-MM-dd HH:mm')}"></td>
+        </tr>
+        <tr>
+            <td>Status</td>
+            <td th:text="${ticket.message}"></td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

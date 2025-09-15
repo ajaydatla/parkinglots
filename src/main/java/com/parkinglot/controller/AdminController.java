@@ -15,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +35,14 @@ public class AdminController {
     @GetMapping("/dashboard")
     public String getAdminHome(){
         return "admin";
+    }
+
+    @GetMapping("/home")
+    public String home(Model model, @AuthenticationPrincipal OidcUser oidcUser) {
+        log.info("oidc user {} authenticated",oidcUser.getFullName());
+        model.addAttribute("name", oidcUser.getFullName());
+        model.addAttribute("email", oidcUser.getEmail());
+        return "adminhome";
     }
 
     // Parking Slot Management
