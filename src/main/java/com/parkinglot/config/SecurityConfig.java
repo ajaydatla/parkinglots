@@ -39,7 +39,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/css/**", "/js/**").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/admin/**","/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/user/**", "/api/parking/**").hasRole("USER")
                         .anyRequest().authenticated()
                 )
@@ -76,20 +76,19 @@ public class SecurityConfig {
             user.setName(name);
 
             // Assign role (default USER)
-            if (user.getRole() == null) {
-                user.setRole(UserRole.USER);
-            }
+
 
 
 
             Set<GrantedAuthority> mappedAuthorities = new HashSet<>();
-            // Default role: ROLE_USER
-            mappedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+            String regId = userRequest.getClientRegistration().getRegistrationId();
 
-            // Example: if email is admin → ROLE_ADMIN
-            if (email != null && email.equals("ajaydatlalbn06@gmail.com")) {
+            if ("google-admin".equals(regId)) {
                 mappedAuthorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
                 user.setRole(UserRole.ADMIN);
+            } else {
+                mappedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+                user.setRole(UserRole.USER);
             }
             userRepository.save(user);
 

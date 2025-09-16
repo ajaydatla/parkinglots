@@ -13,7 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +27,7 @@ public class AdminServiceImpl implements AdminService {
     private final ParkingLotRepository parkingLotRepository;
     private final TicketRepository ticketRepository;
     private final UserRepository userRepository;
+    private final PaymentRepository paymentRepository;
 
     @Override
     @Transactional
@@ -174,7 +177,11 @@ public class AdminServiceImpl implements AdminService {
                         t.getSlot() != null ? t.getSlot().getSlotNumber() : null,
                         t.getEntryTime(),
                         t.getExitTime(),
-                        t.getStatus()
+                        t.getStatus(),
+                        t.getUser().getUsername(),
+                        paymentRepository.findByTicketId(t.getId())
+                                .map(Payment::getAmount)
+                                .orElse(BigDecimal.ZERO)
                 ))
                 .toList();
     }

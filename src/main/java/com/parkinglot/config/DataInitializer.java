@@ -128,7 +128,7 @@ public class DataInitializer implements CommandLineRunner {
         // Bike pricing: First 2 hours free, then ₹10/hour
         PricingRule bikeRule = new PricingRule();
         bikeRule.setVehicleType(VehicleType.BIKE);
-        bikeRule.setFreeHours(2);
+        bikeRule.setFreeHours(0);
         bikeRule.setHourlyRate(BigDecimal.valueOf(10.00));
         bikeRule.setDailyMaxRate(BigDecimal.valueOf(100.00));
         bikeRule.setParkingLot(parkingLot);
@@ -137,7 +137,7 @@ public class DataInitializer implements CommandLineRunner {
         // Car pricing: First 2 hours free, then ₹20/hour
         PricingRule carRule = new PricingRule();
         carRule.setVehicleType(VehicleType.CAR);
-        carRule.setFreeHours(2);
+        carRule.setFreeHours(0);
         carRule.setHourlyRate(BigDecimal.valueOf(20.00));
         carRule.setDailyMaxRate(BigDecimal.valueOf(300.00));
         carRule.setParkingLot(parkingLot);
@@ -146,7 +146,7 @@ public class DataInitializer implements CommandLineRunner {
         // Truck pricing: First 1 hour free, then ₹50/hour
         PricingRule truckRule = new PricingRule();
         truckRule.setVehicleType(VehicleType.TRUCK);
-        truckRule.setFreeHours(1);
+        truckRule.setFreeHours(0);
         truckRule.setHourlyRate(BigDecimal.valueOf(50.00));
         truckRule.setDailyMaxRate(BigDecimal.valueOf(500.00));
         truckRule.setParkingLot(parkingLot);

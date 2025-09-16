@@ -1,6 +1,7 @@
 package com.parkinglot.repository;
 
 import com.parkinglot.entity.Ticket;
+import com.parkinglot.entity.User;
 import com.parkinglot.enums.TicketStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -24,4 +25,6 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     @Query("SELECT t FROM Ticket t WHERE t.entryTime BETWEEN :startTime AND :endTime")
     List<Ticket> findByEntryTimeBetween(@Param("startTime") LocalDateTime startTime, 
                                        @Param("endTime") LocalDateTime endTime);
+
+    List<Ticket> findByUser(User user);
 }
